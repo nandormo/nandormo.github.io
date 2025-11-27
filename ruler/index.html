@@ -52,11 +52,29 @@
   .label-right {
     right: 6%;
   }
+
+  /* Bottom-center text field */
+  .input-container {
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .bottom-input {
+    font-size: 16px;
+  }
 </style>
 </head>
 <body>
 
 <div class="ruler" id="ruler"></div>
+
+<!-- Bottom-center text field -->
+<div class="input-container">
+  <input class="bottom-input" type="text" placeholder="Type here…" />
+</div>
 
 <script>
   const ruler = document.getElementById("ruler");
