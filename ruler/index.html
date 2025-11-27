@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Percent Ruler</title>
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: #fff;
+    font-family: sans-serif;
+  }
+
+  .ruler {
+    position: relative;
+    height: 100%;
+    width: 100%;
+  }
+
+  .tick {
+    position: absolute;
+    height: 1px;
+    background: #0005;
+  }
+
+  .tick-left {
+    left: 0;
+    width: 5%;
+  }
+
+  .tick-right {
+    right: 0;
+    width: 5%;
+  }
+
+  .major {
+    height: 3px;
+    background: #000;
+  }
+
+  .label {
+    position: absolute;
+    font-size: 12px;
+    color: #000;
+    transform: translateY(-6px);
+  }
+
+  .label-left {
+    left: 6%;
+  }
+
+  .label-right {
+    right: 6%;
+  }
+</style>
+</head>
+<body>
+
+<div class="ruler" id="ruler"></div>
+
+<script>
+  const ruler = document.getElementById("ruler");
+
+  function addTick(percent, isMajor = false, label = null) {
+    const tickL = document.createElement("div");
+    tickL.className = "tick tick-left" + (isMajor ? " major" : "");
+    tickL.style.top = percent + "%";
+
+    const tickR = document.createElement("div");
+    tickR.className = "tick tick-right" + (isMajor ? " major" : "");
+    tickR.style.top = percent + "%";
+
+    ruler.appendChild(tickL);
+    ruler.appendChild(tickR);
+
+    if (label !== null) {
+      const labelLeft = document.createElement("div");
+      labelLeft.className = "label label-left";
+      labelLeft.style.top = percent + "%";
+      labelLeft.textContent = label;
+
+      const labelRight = document.createElement("div");
+      labelRight.className = "label label-right";
+      labelRight.style.top = percent + "%";
+      labelRight.textContent = label;
+
+      ruler.appendChild(labelLeft);
+      ruler.appendChild(labelRight);
+    }
+  }
+
+  const majorTicks = new Set([10, 25, 50, 75, 90]);
+
+  // 1% ticks from 1–10
+  for (let i = 1; i <= 10; i++) {
+    addTick(i, majorTicks.has(i));
+  }
+
+  // 10% ticks from 20–80
+  for (let i = 20; i <= 80; i += 10) {
+    addTick(i, majorTicks.has(i));
+  }
+
+  // 1% ticks from 90–99 (no 100%)
+  for (let i = 90; i <= 99; i++) {
+    addTick(i, majorTicks.has(i));
+  }
+
+  // Add labels only on major ticks
+  majorTicks.forEach(p => {
+    addTick(p, true, p + "%");
+  });
+</script>
+
+</body>
+</html>
