@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chromium Local Network Access Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 2rem;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #0071e3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover { background-color: #0077ed; }
+        #log {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 1rem;
+        }
+        .meta { color: #86868b; font-size: 0.85rem; margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Chromium LNA Testing Ground</h2>
+    <div class="meta" id="context-check">Checking security context...</div>
+    
+    <p>Use the buttons below to force Chromium to trigger its local network detection rules.</p>
+    
+    <button onclick="queryPermission()">1. Query Permission Status</button>
+    <button onclick="triggerRouterFetch()">2. Fetch from Common Router IP</button>
+    <button onclick="triggerExplicitLocalFetch()">3. Explicit 'Local' Target Fetch</button>
+    
+    <h3>Console Log:</h3>
+    <div id="log">Logs will appear here...</div>
+</div>
+
+<script>
+    const logDiv = document.getElementById('log');
+    
+    function log(message, isError = false) {
+        const timestamp = new Date().toLocaleTimeString();
+        const color = isError ? '#ff453a' : '#30d158';
+        logDiv.innerHTML += `<span style="color: ${color}">[${timestamp}] ${message}</span>\n`;
+        logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    // Verify if the page is running in a secure context required by LNA
+    if (window.isSecureContext) {
+        document.getElementById('context-check').innerText = "✓ Running in Secure Context (LNA Prompts Allowed)";
+        document.getElementById('context-check').style.color = "green";
+    } else {
+        document.getElementById('context-check').innerText = "❌ NOT in Secure Context. LNA will block this silently. Use localhost or HTTPS.";
+        document.getElementById('context-check').style.color = "red";
+    }
+
+    // 1. Queries the browser permission status API for the exact ID
+    async function queryPermission() {
+        try {
+            log("Querying 'local-network' permission status...");
+            // Note: In older Chromium builds, the string might still be 'private-network-access'
+            const result = await navigator.permissions.query({ name: 'local-network' });
+            log(`Permission state: ${result.state}`);
+            
+            result.onchange = () => {
+                log(`Permission changed dynamically to: ${result.state}`);
+            };
+        } catch (error) {
+            log(`API Error (Your Chromium build may use an older token name): ${error.message}`, true);
+        }
+    }
+
+    // 2. Triggers a standard fetch to a known local router IP address 
+    // This triggers the preflight check because the IP resolves to a 'local' space
+    function triggerRouterFetch() {
+        log("Attempting fetch to standard router gateway (http://192.168.1.1)...");
+        
+        fetch('http://192.168.1.1', { mode: 'no-cors' })
+            .then(res => log(`Fetch successful or blocked by CORS (but network request fired!). Status: ${res.type}`))
+            .catch(err => log(`Fetch blocked/failed. Check your browser console network tab for LNA Preflight errors. Details: ${err.message}`, true));
+    }
+
+    // 3. Uses explicit target address space routing matching the spec requirements
+    function triggerExplicitLocalFetch() {
+        log("Attempting fetch with explicit targetAddressSpace: 'local'...");
+        
+        // This hint tells the browser exactly what network routing logic to trigger
+        fetch('http://192.168.1.50', { 
+            mode: 'no-cors',
+            targetAddressSpace: 'local' 
+        })
+        .then(res => log(`Fetch complete. Status type: ${res.type}`))
+        .catch(err => log(`Explicit fetch failed: ${err.message}`, true));
+    }
+</script>
+
+</body>
+</html>
