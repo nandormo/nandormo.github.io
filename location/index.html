@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>permission.site</title>
+</head>
+<body>
+  <input type="text" placeholder="Type here...">
+  <br><br>
+  <button id="location">Location</button>
+  <script>
+    document.getElementById("location").addEventListener("click", () => {
+      setTimeout(() => {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => console.log("success", pos),
+          (err) => console.error("error", err),
+        );
+      }, 5000);
+    });
+  </script>
+</body>
+</html>
