@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Context Parameters Diff</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: #0d1117; color: #c9d1d9; }
+  h1 { padding: 16px 24px; font-size: 16px; font-weight: 600; border-bottom: 1px solid #30363d; }
+  .file-header { display: flex; background: #161b22; border: 1px solid #30363d; border-radius: 6px 6px 0 0; margin: 16px 16px 0; }
+  .file-header span { flex: 1; padding: 8px 16px; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; color: #8b949e; }
+  .file-header span:first-child { border-right: 1px solid #30363d; }
+  .file-header .old-label { color: #f85149; }
+  .file-header .new-label { color: #3fb950; }
+  table { width: calc(100% - 32px); margin: 0 16px 16px; border-collapse: collapse; border: 1px solid #30363d; border-top: none; border-radius: 0 0 6px 6px; overflow: hidden; table-layout: fixed; }
+  td { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; line-height: 20px; vertical-align: top; white-space: pre; overflow: hidden; }
+  .ln { width: 40px; min-width: 40px; max-width: 40px; text-align: right; padding: 0 8px; color: #484f58; user-select: none; background: #0d1117; }
+  .code { padding: 0 12px; background: #0d1117; }
+  .gutter { width: 1px; min-width: 1px; max-width: 1px; background: #30363d; }
+  /* deletion (left side) */
+  tr.del .ln.l, tr.mod .ln.l { background: #3c1e1e; color: #f85149; }
+  tr.del .code.l, tr.mod .code.l { background: #2a1515; }
+  /* addition (right side) */
+  tr.add .ln.r, tr.mod .ln.r { background: #1a3a1a; color: #3fb950; }
+  tr.add .code.r, tr.mod .code.r { background: #122112; }
+  /* empty half for add/del rows */
+  tr.del .ln.r, tr.del .code.r { background: #111518; }
+  tr.add .ln.l, tr.add .code.l { background: #111518; }
+  /* inline word-level highlight */
+  .hi-del { background: #6e3630; border-radius: 2px; }
+  .hi-add { background: #2a6e2a; border-radius: 2px; }
+  /* hunk separator */
+  tr.sep td { background: #161b22; height: 6px; border-top: 1px solid #30363d; border-bottom: 1px solid #30363d; }
+</style>
+</head>
+<body>
+<h1>Explicit Parameters vs Context Parameters</h1>
+<div class="file-header">
+  <span><span class="old-label">&#x2212;</span> Main-old.kt <em>(explicit parameter passing)</em></span>
+  <span><span class="new-label">+</span> Main.kt <em>(context parameters)</em></span>
+</div>
+<table>
+<col class="ln"><col class="code"><col class="gutter"><col class="ln"><col class="code">
+<!-- lines 1-14: identical -->
+<tr><td class="ln l">1</td><td class="code l">// --- Domain ---</td><td class="gutter"></td><td class="ln r">1</td><td class="code r">// --- Domain ---</td></tr>
+<tr><td class="ln l">2</td><td class="code l"></td><td class="gutter"></td><td class="ln r">2</td><td class="code r"></td></tr>
+<tr><td class="ln l">3</td><td class="code l">data class User(val id: Int, val name: String, val email: String)</td><td class="gutter"></td><td class="ln r">3</td><td class="code r">data class User(val id: Int, val name: String, val email: String)</td></tr>
+<tr><td class="ln l">4</td><td class="code l"></td><td class="gutter"></td><td class="ln r">4</td><td class="code r"></td></tr>
+<tr><td class="ln l">5</td><td class="code l">// --- Infrastructure interfaces ---</td><td class="gutter"></td><td class="ln r">5</td><td class="code r">// --- Infrastructure interfaces ---</td></tr>
+<tr><td class="ln l">6</td><td class="code l"></td><td class="gutter"></td><td class="ln r">6</td><td class="code r"></td></tr>
+<tr><td class="ln l">7</td><td class="code l">interface Transaction {</td><td class="gutter"></td><td class="ln r">7</td><td class="code r">interface Transaction {</td></tr>
+<tr><td class="ln l">8</td><td class="code l">    fun execute(sql: String)</td><td class="gutter"></td><td class="ln r">8</td><td class="code r">    fun execute(sql: String)</td></tr>
+<tr><td class="ln l">9</td><td class="code l">}</td><td class="gutter"></td><td class="ln r">9</td><td class="code r">}</td></tr>
+<tr><td class="ln l">10</td><td class="code l"></td><td class="gutter"></td><td class="ln r">10</td><td class="code r"></td></tr>
+<tr><td class="ln l">11</td><td class="code l">interface Logger {</td><td class="gutter"></td><td class="ln r">11</td><td class="code r">interface Logger {</td></tr>
+<tr><td class="ln l">12</td><td class="code l">    fun info(msg: String)</td><td class="gutter"></td><td class="ln r">12</td><td class="code r">    fun info(msg: String)</td></tr>
+<tr><td class="ln l">13</td><td class="code l">}</td><td class="gutter"></td><td class="ln r">13</td><td class="code r">}</td></tr>
+<tr><td class="ln l">14</td><td class="code l"></td><td class="gutter"></td><td class="ln r">14</td><td class="code r"></td></tr>
+<!-- hunk 1: repository comments -->
+<tr class="sep"><td></td><td></td><td></td><td></td><td></td></tr>
+<tr class="mod"><td class="ln l">15</td><td class="code l">// --- Repository layer: requires a Transaction as a parameter ---</td><td class="gutter"></td><td class="ln r">15</td><td class="code r">// --- Repository layer: requires a Transaction in context ---</td></tr>
+<tr class="mod"><td class="ln l">16</td><td class="code l">// Nothing stops you from calling these without a transaction at the type level.</td><td class="gutter"></td><td class="ln r">16</td><td class="code r">// These functions CANNOT be called outside a transaction &mdash; the compiler enforces it.</td></tr>
+<tr><td class="ln l">17</td><td class="code l"></td><td class="gutter"></td><td class="ln r">17</td><td class="code r"></td></tr>
+<!-- hunk 2: saveUser -->
+<tr class="mod"><td class="ln l">18</td><td class="code l"><span class="hi-del">fun saveUser(tx: Transaction, log: Logger, user: User)</span> {</td><td class="gutter"></td><td class="ln r">18</td><td class="code r"><span class="hi-add">context(tx: Transaction, log: Logger)</span></td></tr>
+<tr class="add"><td class="ln l"></td><td class="code l"></td><td class="gutter"></td><td class="ln r">19</td><td class="code r"><span class="hi-add">fun saveUser(user: User) {</span></td></tr>
+<tr><td class="ln l">19</td><td class="code l">    log.info("Saving user ${user.name}")</td><td class="gutter"></td><td class="ln r">20</td><td class="code r">    log.info("Saving user ${user.name}")</td></tr>
+<tr><td class="ln l">20</td><td class="code l">    tx.execute("INSERT INTO users (id, name, email) VALUES (${user.id}, '${user.name}', '${user.email}')")</td><td class="gutter"></td><td class="ln r">21</td><td class="code r">    tx.execute("INSERT INTO users (id, name, email) VALUES (${user.id}, '${user.name}', '${user.email}')")</td></tr>
+<tr><td class="ln l">21</td><td class="code l">}</td><td class="gutter"></td><td class="ln r">22</td><td class="code r">}</td></tr>
+<tr><td class="ln l">22</td><td class="code l"></td><td class="gutter"></td><td class="ln r">23</td><td class="code r"></td></tr>
+<!-- hunk 3: deleteUser -->
+<tr class="mod"><td class="ln l">23</td><td class="code l"><span class="hi-del">fun deleteUser(tx: Transaction, log: Logger, id: Int)</span> {</td><td class="gutter"></td><td class="ln r">24</td><td class="code r"><span class="hi-add">context(tx: Transaction, log: Logger)</span></td></tr>
+<tr class="add"><td class="ln l"></td><td class="code l"></td><td class="gutter"></td><td class="ln r">25</td><td class="code r"><span class="hi-add">fun deleteUser(id: Int) {</span></td></tr>
+<tr><td class="ln l">24</td><td class="code l">    log.info("Deleting user $id")</td><td class="gutter"></td><td class="ln r">26</td><td class="code r">    log.info("Deleting user $id")</td></tr>
+<tr><td class="ln l">25</td><td class="code l">    tx.execute("DELETE FROM users WHERE id = $id")</td><td class="gutter"></td><td class="ln r">27</td><td class="code r">    tx.execute("DELETE FROM users WHERE id = $id")</td></tr>
+<tr><td class="ln l">26</td><td class="code l">}</td><td class="gutter"></td><td class="ln r">28</td><td class="code r">}</td></tr>
+<tr><td class="ln l">27</td><td class="code l"></td><td class="gutter"></td><td class="ln r">29</td><td class="code r"></td></tr>
+<!-- hunk 4: service layer comments -->
+<tr class="mod"><td class="ln l">28</td><td class="code l">// --- Service layer: must forward tx and log manually to every call ---</td><td class="gutter"></td><td class="ln r">30</td><td class="code r">// --- Service layer: also requires the context, but doesn't have to pass it manually ---</td></tr>
+<tr class="mod"><td class="ln l">29</td><td class="code l">// Note: `replaceUser` has to pass tx and log through even though it doesn't use them directly.</td><td class="gutter"></td><td class="ln r">31</td><td class="code r">// Note: `transferUser` calls saveUser and deleteUser without forwarding tx/log explicitly.</td></tr>
+<tr><td class="ln l">30</td><td class="code l"></td><td class="gutter"></td><td class="ln r">32</td><td class="code r"></td></tr>
+<!-- hunk 5: replaceUser -->
+<tr class="mod"><td class="ln l">31</td><td class="code l"><span class="hi-del">fun replaceUser(tx: Transaction, log: Logger, oldId: Int, newUser: User)</span> {</td><td class="gutter"></td><td class="ln r">33</td><td class="code r"><span class="hi-add">context(tx: Transaction, log: Logger)</span></td></tr>
+<tr class="add"><td class="ln l"></td><td class="code l"></td><td class="gutter"></td><td class="ln r">34</td><td class="code r"><span class="hi-add">fun replaceUser(oldId: Int, newUser: User) {</span></td></tr>
+<tr><td class="ln l">32</td><td class="code l">    log.info("Replacing user $oldId with ${newUser.name}")</td><td class="gutter"></td><td class="ln r">35</td><td class="code r">    log.info("Replacing user $oldId with ${newUser.name}")</td></tr>
+<tr class="mod"><td class="ln l">33</td><td class="code l">    deleteUser(<span class="hi-del">tx, log, </span>oldId)</td><td class="gutter"></td><td class="ln r">36</td><td class="code r">    deleteUser(oldId)</td></tr>
+<tr class="mod"><td class="ln l">34</td><td class="code l">    saveUser(<span class="hi-del">tx, log, </span>newUser)</td><td class="gutter"></td><td class="ln r">37</td><td class="code r">    saveUser(newUser)</td></tr>
+<tr><td class="ln l">35</td><td class="code l">}</td><td class="gutter"></td><td class="ln r">38</td><td class="code r">}</td></tr>
+<tr><td class="ln l">36</td><td class="code l"></td><td class="gutter"></td><td class="ln r">39</td><td class="code r"></td></tr>
+<!-- lines 37-45: identical (FakeDatabase header) -->
+<tr class="sep"><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="ln l">37</td><td class="code l">// --- Fake database that supports transactions ---</td><td class="gutter"></td><td class="ln r">40</td><td class="code r">// --- Fake database that supports transactions ---</td></tr>
+<tr><td class="ln l">38</td><td class="code l"></td><td class="gutter"></td><td class="ln r">41</td><td class="code r"></td></tr>
+<tr><td class="ln l">39</td><td class="code l">class FakeDatabase : Logger {</td><td class="gutter"></td><td class="ln r">42</td><td class="code r">class FakeDatabase : Logger {</td></tr>
+<tr><td class="ln l">40</td><td class="code l">    private val log = mutableListOf&lt;String&gt;()</td><td class="gutter"></td><td class="ln r">43</td><td class="code r">    private val log = mutableListOf&lt;String&gt;()</td></tr>
+<tr><td class="ln l">41</td><td class="code l"></td><td class="gutter"></td><td class="ln r">44</td><td class="code r"></td></tr>
+<tr><td class="ln l">42</td><td class="code l">    override fun info(msg: String) {</td><td class="gutter"></td><td class="ln r">45</td><td class="code r">    override fun info(msg: String) {</td></tr>
+<tr><td class="ln l">43</td><td class="code l">        log.add("[LOG] $msg")</td><td class="gutter"></td><td class="ln r">46</td><td class="code r">        log.add("[LOG] $msg")</td></tr>
+<tr><td class="ln l">44</td><td class="code l">    }</td><td class="gutter"></td><td class="ln r">47</td><td class="code r">    }</td></tr>
+<tr><td class="ln l">45</td><td class="code l"></td><td class="gutter"></td><td class="ln r">48</td><td class="code r"></td></tr>
+<!-- hunk 6: transaction block type -->
+<tr class="mod"><td class="ln l">46</td><td class="code l">    fun &lt;T&gt; transaction(block: <span class="hi-del">(Transaction, Logger) -&gt; T</span>): T {</td><td class="gutter"></td><td class="ln r">49</td><td class="code r">    fun &lt;T&gt; transaction(block: <span class="hi-add">context(Transaction, Logger) () -&gt; T</span>): T {</td></tr>
+<!-- lines 47-63: identical -->
+<tr><td class="ln l">47</td><td class="code l">        val statements = mutableListOf&lt;String&gt;()</td><td class="gutter"></td><td class="ln r">50</td><td class="code r">        val statements = mutableListOf&lt;String&gt;()</td></tr>
+<tr><td class="ln l">48</td><td class="code l">        val tx = object : Transaction {</td><td class="gutter"></td><td class="ln r">51</td><td class="code r">        val tx = object : Transaction {</td></tr>
+<tr><td class="ln l">49</td><td class="code l">            override fun execute(sql: String) {</td><td class="gutter"></td><td class="ln r">52</td><td class="code r">            override fun execute(sql: String) {</td></tr>
+<tr><td class="ln l">50</td><td class="code l">                statements.add(sql)</td><td class="gutter"></td><td class="ln r">53</td><td class="code r">                statements.add(sql)</td></tr>
+<tr><td class="ln l">51</td><td class="code l">            }</td><td class="gutter"></td><td class="ln r">54</td><td class="code r">            }</td></tr>
+<tr><td class="ln l">52</td><td class="code l">        }</td><td class="gutter"></td><td class="ln r">55</td><td class="code r">        }</td></tr>
+<tr><td class="ln l">53</td><td class="code l">        info("BEGIN")</td><td class="gutter"></td><td class="ln r">56</td><td class="code r">        info("BEGIN")</td></tr>
+<tr><td class="ln l">54</td><td class="code l">        val result = block(tx, this)</td><td class="gutter"></td><td class="ln r">57</td><td class="code r">        val result = block(tx, this)</td></tr>
+<tr><td class="ln l">55</td><td class="code l">        info("COMMIT (${statements.size} statements)")</td><td class="gutter"></td><td class="ln r">58</td><td class="code r">        info("COMMIT (${statements.size} statements)")</td></tr>
+<tr><td class="ln l">56</td><td class="code l">        statements.forEach { info("  &gt; $it") }</td><td class="gutter"></td><td class="ln r">59</td><td class="code r">        statements.forEach { info("  &gt; $it") }</td></tr>
+<tr><td class="ln l">57</td><td class="code l">        return result</td><td class="gutter"></td><td class="ln r">60</td><td class="code r">        return result</td></tr>
+<tr><td class="ln l">58</td><td class="code l">    }</td><td class="gutter"></td><td class="ln r">61</td><td class="code r">    }</td></tr>
+<tr><td class="ln l">59</td><td class="code l"></td><td class="gutter"></td><td class="ln r">62</td><td class="code r"></td></tr>
+<tr><td class="ln l">60</td><td class="code l">    fun printLog() {</td><td class="gutter"></td><td class="ln r">63</td><td class="code r">    fun printLog() {</td></tr>
+<tr><td class="ln l">61</td><td class="code l">        log.forEach(::println)</td><td class="gutter"></td><td class="ln r">64</td><td class="code r">        log.forEach(::println)</td></tr>
+<tr><td class="ln l">62</td><td class="code l">    }</td><td class="gutter"></td><td class="ln r">65</td><td class="code r">    }</td></tr>
+<tr><td class="ln l">63</td><td class="code l">}</td><td class="gutter"></td><td class="ln r">66</td><td class="code r">}</td></tr>
+<tr><td class="ln l">64</td><td class="code l"></td><td class="gutter"></td><td class="ln r">67</td><td class="code r"></td></tr>
+<!-- lines 65-67: identical (main header) -->
+<tr class="sep"><td></td><td></td><td></td><td></td><td></td></tr>
+<tr><td class="ln l">65</td><td class="code l">// --- Main ---</td><td class="gutter"></td><td class="ln r">68</td><td class="code r">// --- Main ---</td></tr>
+<tr><td class="ln l">66</td><td class="code l"></td><td class="gutter"></td><td class="ln r">69</td><td class="code r"></td></tr>
+<tr><td class="ln l">67</td><td class="code l">fun main() {</td><td class="gutter"></td><td class="ln r">70</td><td class="code r">fun main() {</td></tr>
+<!-- hunk 7: println + transaction call -->
+<tr class="mod"><td class="ln l">68</td><td class="code l">    println("RUNNING OLD (explicit parameters)")</td><td class="gutter"></td><td class="ln r">71</td><td class="code r">    println("RUNNING NEW (context parameters)")</td></tr>
+<tr><td class="ln l">69</td><td class="code l">    val db = FakeDatabase()</td><td class="gutter"></td><td class="ln r">72</td><td class="code r">    val db = FakeDatabase()</td></tr>
+<tr><td class="ln l">70</td><td class="code l"></td><td class="gutter"></td><td class="ln r">73</td><td class="code r"></td></tr>
+<tr class="mod"><td class="ln l">71</td><td class="code l">    db.transaction {<span class="hi-del"> tx, log -&gt;</span></td><td class="gutter"></td><td class="ln r">74</td><td class="code r">    db.transaction {</td></tr>
+<tr><td class="ln l">72</td><td class="code l">        val alice = User(1, "Alice", "alice@example.com")</td><td class="gutter"></td><td class="ln r">75</td><td class="code r">        val alice = User(1, "Alice", "alice@example.com")</td></tr>
+<tr class="mod"><td class="ln l">73</td><td class="code l">        saveUser(<span class="hi-del">tx, log, </span>alice)</td><td class="gutter"></td><td class="ln r">76</td><td class="code r">        saveUser(alice)</td></tr>
+<tr><td class="ln l">74</td><td class="code l"></td><td class="gutter"></td><td class="ln r">77</td><td class="code r"></td></tr>
+<tr><td class="ln l">75</td><td class="code l">        val bob = User(2, "Bob", "bob@example.com")</td><td class="gutter"></td><td class="ln r">78</td><td class="code r">        val bob = User(2, "Bob", "bob@example.com")</td></tr>
+<tr class="mod"><td class="ln l">76</td><td class="code l">        replaceUser(<span class="hi-del">tx, log, </span>alice.id, bob)</td><td class="gutter"></td><td class="ln r">79</td><td class="code r">        replaceUser(alice.id, bob)</td></tr>
+<tr><td class="ln l">77</td><td class="code l">    }</td><td class="gutter"></td><td class="ln r">80</td><td class="code r">    }</td></tr>
+<tr><td class="ln l">78</td><td class="code l"></td><td class="gutter"></td><td class="ln r">81</td><td class="code r"></td></tr>
+<tr><td class="ln l">79</td><td class="code l">    println("=== Execution log ===")</td><td class="gutter"></td><td class="ln r">82</td><td class="code r">    println("=== Execution log ===")</td></tr>
+<tr><td class="ln l">80</td><td class="code l">    db.printLog()</td><td class="gutter"></td><td class="ln r">83</td><td class="code r">    db.printLog()</td></tr>
+<tr><td class="ln l">81</td><td class="code l"></td><td class="gutter"></td><td class="ln r">84</td><td class="code r"></td></tr>
+<!-- hunk 8: final comments -->
+<tr class="mod"><td class="ln l">82</td><td class="code l">    // This DOES compile &mdash; no safety net, will crash at runtime:</td><td class="gutter"></td><td class="ln r">85</td><td class="code r">    // This would NOT compile &mdash; there's no Transaction in scope:</td></tr>
+<tr class="mod"><td class="ln l">83</td><td class="code l">    // saveUser(???, ???, User(3, "Charlie", "charlie@example.com"))</td><td class="gutter"></td><td class="ln r">86</td><td class="code r">    // saveUser(User(3, "Charlie", "charlie@example.com"))</td></tr>
+<tr><td class="ln l">84</td><td class="code l">}</td><td class="gutter"></td><td class="ln r">87</td><td class="code r">}</td></tr>
+</table>
+</body>
+</html>
