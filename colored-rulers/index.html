@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Colored Rulers — svh / dvh / lvh</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: #1a1a1a;
+    line-height: 1.7;
+  }
+
+  /* ---- Scrollable content ---- */
+  .content {
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 90vh;
+  }
+  .content h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+  .content .lede { font-size: 1.02rem; color: #555; margin: 0 0 1.5rem; }
+  .content p { margin: 1rem 0; }
+  @media (min-width: 760px) {
+    .content { padding-left: 170px; }
+  }
+
+  /* ---- Overlay with the three rulers ---- */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 10px;
+    display: flex;
+    gap: 4px;
+    pointer-events: none;   /* let text underneath stay selectable / scrollable */
+    z-index: 50;
+    font-size: 11px;
+  }
+
+  .ruler {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50px;
+  }
+
+  /* Label sits at the vertical middle of the bar so it stays readable
+     even when the top or bottom of the bar is clipped off-screen. */
+  .ruler-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    background: rgba(255, 255, 255, .94);
+    padding: 4px 6px;
+    border-radius: 5px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
+    line-height: 1.1;
+    white-space: nowrap;
+    z-index: 2;
+  }
+
+  /* Graduated notches crossing each bar, near the top + bottom ends. */
+  .notch {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;     /* a bit wider than the 10px bar so the tick reads clearly */
+    height: 1px;
+    background: rgba(0, 0, 0, .55);
+    z-index: 1;
+  }
+  .ruler-label .unit { font-weight: 700; }
+  .ruler-label .px {
+    font-variant-numeric: tabular-nums;
+    font-size: 10px;
+    color: #333;
+  }
+
+  /* The colored bar: its height is the actual unit value. */
+  .bar {
+    position: relative;
+    width: 10px;
+    background: currentColor;
+    border-radius: 3px;
+  }
+  .bar--svh { height: 100svh; }
+  .bar--dvh { height: 100dvh; }
+  .bar--lvh { height: 100lvh; }
+
+  /* Arrowheads removed: the notches now mark each end, and the bars start
+     flush at the top of the screen so the first notch really is 8px down. */
+
+  .ruler--svh { color: #16a34a; } /* green  — smallest */
+  .ruler--dvh { color: #f97316; } /* orange — dynamic (middle) */
+  .ruler--lvh { color: #dc2626; } /* red    — largest */
+</style>
+</head>
+<body>
+
+<main class="content">
+  <h1>Colored Rulers</h1>
+  <p class="lede">Three viewport-height units overlaid as rulers. Green = <code>svh</code> (smallest), orange = <code>dvh</code> (dynamic), red = <code>lvh</code> (largest). Scroll around — watch the orange one move.</p>
+
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?</p>
+
+  <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.</p>
+
+  <p>Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
+
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+
+  <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
+
+  <p>Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.</p>
+
+  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+
+  <p>Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?</p>
+
+  <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.</p>
+</main>
+
+<!-- Fixed overlay: three rulers that always show their sizes, with notches
+     at 8/16/32/64 px from each end. Bars start flush at the top of the screen. -->
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="ruler ruler--svh">
+    <div class="bar bar--svh" id="bar-svh">
+      <div class="ruler-label">
+        <span class="unit">svh</span>
+        <span class="px" id="px-svh">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler ruler--dvh">
+    <div class="bar bar--dvh" id="bar-dvh">
+      <div class="ruler-label">
+        <span class="unit">dvh</span>
+        <span class="px" id="px-dvh">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="ruler ruler--lvh">
+    <div class="bar bar--lvh" id="bar-lvh">
+      <div class="ruler-label">
+        <span class="unit">lvh</span>
+        <span class="px" id="px-lvh">—</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const units = ["svh", "dvh", "lvh"];
+
+  // Graduated notches near each end: 8, 16, 32, 64 px from the top + bottom.
+  const NOTCHES = [8, 16, 32, 64];
+  for (const key of units) {
+    const bar = document.getElementById("bar-" + key);
+    for (const d of NOTCHES) {
+      const top = document.createElement("div");
+      top.className = "notch";
+      top.style.top = d + "px";
+      bar.appendChild(top);
+      const bot = document.createElement("div");
+      bot.className = "notch";
+      bot.style.bottom = d + "px";
+      bar.appendChild(bot);
+    }
+  }
+
+  function update() {
+    for (const key of units) {
+      const bar = document.getElementById("bar-" + key);
+      // getBoundingClientRect returns the full layout height (even the part
+      // of the red bar that overflows past the bottom of the viewport).
+      const px = Math.round(bar.getBoundingClientRect().height);
+      document.getElementById("px-" + key).textContent = px + "px";
+    }
+  }
+
+  let raf = null;
+  function schedule() {
+    if (raf) return;
+    raf = requestAnimationFrame(() => { raf = null; update(); });
+  }
+
+  window.addEventListener("resize", schedule);
+  window.addEventListener("scroll", schedule, { passive: true });
+  // Mobile browsers change the dynamic viewport (and thus dvh) when the
+  // address bar shows/hides; visualViewport fires for that.
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", schedule);
+    window.visualViewport.addEventListener("scroll", schedule);
+  }
+
+  update();
+</script>
+
+</body>
+</html>
