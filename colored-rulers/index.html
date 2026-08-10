@@ -26,6 +26,31 @@
     .content { padding-left: 170px; }
   }
 
+  /* ---- Mid-page text field ---- */
+  .mid-input-row {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+  }
+  .mid-input {
+    font-family: inherit;
+    font-size: 16px;            /* 16px avoids iOS auto-zoom on focus */
+    padding: .55rem .8rem;
+    width: 100%;
+    max-width: 320px;
+    color: #1a1a1a;
+    background: #fff;
+    border: 1px solid #c7c7c7;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+  }
+  .mid-input::placeholder { color: #999; }
+  .mid-input:focus {
+    outline: none;
+    border-color: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, .2);
+  }
+
   /* ---- Overlay with the three rulers ---- */
   .overlay {
     position: fixed;
@@ -118,6 +143,10 @@
   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
 
   <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+
+  <div class="mid-input-row">
+    <input type="text" class="mid-input" placeholder="Type here…" />
+  </div>
 
   <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
 
