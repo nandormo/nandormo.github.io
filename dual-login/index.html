@@ -43,9 +43,20 @@
     padding: 1.5rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
   }
-  .pane h2 { font-size: 1.1rem; margin: 0 0 1rem; }
-  .pane--user h2 { color: #16a34a; }
-  .pane--admin h2 { color: #dc2626; }
+  /* Strip the default fieldset chrome — it groups semantically, not visually. */
+  fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  legend { padding: 0; }
+  legend h2 {
+    font-size: 1.1rem;
+    margin: 0 0 1rem;
+  }
+  .pane--user legend { color: #16a34a; }
+  .pane--admin legend { color: #dc2626; }
 
   .field { margin-bottom: 1rem; }
   label {
@@ -95,16 +106,21 @@
 <body>
 
 <h1>Dual Login</h1>
-<p class="lede">Two independent login forms on one page. Both are annotated with
-<code>autocomplete</code> so a browser password manager can offer credentials for
-each one; the <code>section-*</code> tokens keep the user and admin sets apart.
-Submitting does nothing.</p>
+<p class="lede">Two independent login forms on one page. Each credential pair is
+grouped in a <code>&lt;fieldset&gt;</code> with a <code>&lt;legend&gt;</code>, and
+annotated with <code>autocomplete</code> so a browser password manager can offer
+credentials for each one; the <code>section-*</code> tokens keep the user and admin
+sets apart. Each form is a real <code>GET</code> submit to the site index — no
+JavaScript, no backend — so the fields show up in the resulting query string.</p>
 
 <div class="panes">
 
   <section class="pane pane--user">
-    <h2>User login</h2>
-    <form id="user-form" action="#" method="post" novalidate>
+    <form id="user-form" action="../index.html" method="get">
+      <fieldset>
+      <!-- A heading inside the legend keeps the pane in the document outline
+           while still labelling the fieldset. Both are valid here. -->
+      <legend><h2>User login</h2></legend>
       <div class="field">
         <label for="user-username">Username</label>
         <input
@@ -129,13 +145,15 @@ Submitting does nothing.</p>
       </div>
 
       <button type="submit">Sign in</button>
+      </fieldset>
       <p class="status" id="user-status" role="status" aria-live="polite"></p>
     </form>
   </section>
 
   <section class="pane pane--admin">
-    <h2>Admin login</h2>
-    <form id="admin-form" action="#" method="post" novalidate>
+    <form id="admin-form" action="../index.html" method="get">
+      <fieldset>
+      <legend><h2>Admin login</h2></legend>
       <div class="field">
         <label for="admin-username">Username</label>
         <input
@@ -160,23 +178,12 @@ Submitting does nothing.</p>
       </div>
 
       <button type="submit">Sign in</button>
+      </fieldset>
       <p class="status" id="admin-status" role="status" aria-live="polite"></p>
     </form>
   </section>
 
 </div>
-
-<script>
-  // No-op submit: just report which form fired, never navigate.
-  for (const which of ["user", "admin"]) {
-    const form = document.getElementById(which + "-form");
-    const status = document.getElementById(which + "-status");
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      status.textContent = "Submitted (" + which + ") — no-op.";
-    });
-  }
-</script>
 
 </body>
 </html>
